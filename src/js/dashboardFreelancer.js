@@ -1,5 +1,4 @@
-﻿console.log('%c[dashboardFreelancer.js] VERSION: 2024-12-15-loadCategories-fixed', 'color:lime;font-weight:bold;');
-import { supabase } from './supabase.js';
+﻿import { supabase } from './supabase.js';
 import { Auth } from './auth.js';
 import { Toast } from './toast.js';
 import { OrderUtils } from './orderUtils.js';
@@ -698,7 +697,7 @@ const FreelancerDashboard = {
       .map((p) => {
         return `
           <div class="progress-item">
-            <div class="progress-check ${p.completed ? 'progress-checked' : ''}">${p.completed ? 'âœ“' : 'â—‹'}</div>
+            <div class="progress-check ${p.completed ? 'progress-checked' : ''}">${p.completed ? '✓' : '○'}</div>
             <div class="progress-content">
               <div class="progress-title">${p.title}</div>
               <div class="progress-meta muted">${new Date(p.created_at).toLocaleString()}</div>

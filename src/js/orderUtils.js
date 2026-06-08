@@ -11,9 +11,9 @@ const orderStatusMeta = {
 
 function formatCurrency(amount) {
   try {
-    return new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' }).format(Number(amount));
+    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(Number(amount));
   } catch {
-    return `$${Number(amount)}`;
+    return `Rp ${Number(amount).toLocaleString('id-ID')}`;
   }
 }
 

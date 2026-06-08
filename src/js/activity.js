@@ -31,52 +31,94 @@ const Activity = {
   /**
    * Get recent activities for a user
    * @param {string} userId
-   * @returns {Promise<Array>}
+   * @param {number} [limit=20]
+   * @returns {Promise<{data: Array|null, error: any}>}
    */
-  async getRecent(userId) {
+  async getRecent(userId, limit = 20) {
     const { data, error } = await supabase
       .from('activity_logs')
       .select('*')
       .eq('user_id', userId)
-      .order('created_at', { descending: true })
-      .limit(20);
+      .order('created_at', { ascending: false })
+      .limit(limit);
 
     if (error) {
       console.error('Error fetching activities:', error);
-      return [];
+      return { data: null, error };
     }
 
-    return data.map(log => this.formatAction(log));
+    return { data: data || [], error: null };
   },
 
   /**
    * Format activity log for display
    * @param {object} log 
-   * @returns {object}
+   * @returns {string}
    */
   formatAction(log) {
     const actionMap = {
       'create_service': 'Membuat layanan baru',
       'update_service': 'Mengubah layanan',
+      'delete_service': 'Menghapus layanan',
       'create_order': 'Membuat pesanan',
       'accept_order': 'Menerima pesanan',
       'complete_order': 'Menyelesaikan pesanan',
       'create_review': 'Memberikan ulasan'
     };
 
-    return {
-      ...log,
-      formatted_action: actionMap[log.action] || log.action
+    return actionMap[log.action] || log.action;
+  },
+
+  /**
+   * Get icon for activity action
+   * @param {string} action
+   * @returns {string}
+   */
+  getIcon(action) {
+    const iconMap = {
+      'create_service': '🛠️',
+      'update_service': '✏️',
+      'delete_service': '🗑️',
+      'create_order': '🛒',
+      'accept_order': '✅',
+      'complete_order': '🎉',
+      'create_review': '⭐'
     };
+
+    return iconMap[action] || '📋';
+  },
+
+  /**
+   * Format timestamp for display
+   * @param {string} isoDate
+   * @returns {string}
+   */
+  formatTime(isoDate) {
+    if (!isoDate) return '';
+    try {
+      return new Date(isoDate).toLocaleString('id-ID', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch (e) {
+      return '';
+    }
   }
 };
 
 // Activity action constants
 const ACTIVITY_ACTIONS = {
+  SERVICE_CREATED: 'create_service',
+  ORDER_COMPLETED: 'complete_order',
   REVIEW_GIVEN: 'create_review',
 };
 
 const TARGET_TYPES = {
+  SERVICE: 'service',
+  ORDER: 'order',
   REVIEW: 'review',
 };
 
