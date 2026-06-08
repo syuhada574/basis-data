@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Freelancer Dashboard - Companion Rent</title>
+  <link rel="icon" type="image/svg+xml" href="/src/assets/favicon.svg" />
+  <link rel="stylesheet" href="/src/css/style.css" />
+  <link rel="stylesheet" href="/src/css/navigation.css" />
+  <link rel="stylesheet" href="/src/css/dashboard.css" />
+</head>
+<body class="sidebar-page">
+  <div id="sidebar-container"></div>
+
+  <main class="sidebar-main">
+    <div class="container">
+      <div id="breadcrumb-area"></div>
+      <div class="loading" id="initial-loading">
+        <div style="border:4px solid #f3f3f3; border-top:4px solid #10b981; border-radius:50%; width:40px; height:40px; animation:spin 1s linear infinite; margin:0 auto 1rem;"></div>
+        <p>Memuat dashboard...</p>
+      </div>
+      <div id="dashboard-content"></div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { Auth } from './js/auth.js?v=20241215a';
+    import { Navigation } from './js/navigation.js?v=20241215a';
+
+    await Navigation.setupForLoggedInPage('dashboard');
+    Navigation.renderBreadcrumb('breadcrumb-area');
+
+    // Guard: if a customer landed here, redirect them to the customer dashboard
+    if (Auth.currentUser && Auth.currentUser.role !== 'freelancer') {
+      window.location.replace('/src/customer-dashboard.html');
+    }
+
+    // Load freelancer dashboard logic (with cache-busting query string)
+    console.log('[freelancer-dashboard.html] loading dashboardFreelancer.js?v=20241215a');
+    import('./js/dashboardFreelancer.js?v=20241215a').then(async ({ FreelancerDashboard }) => {
+      console.log('[freelancer-dashboard.html] dashboard module loaded, calling init()');
+      const dash = FreelancerDashboard;
+      await dash.init();
+    }).catch((err) => {
+      console.error('[freelancer-dashboard.html] failed to load dashboard module:', err);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,479 @@
+/* ===== NAVIGATION SYSTEM - Companion Rent ===== */
+/* Navbar (top) styles removed — sidebar is the only navigation */
+
+/* ----- Sidebar User Avatar ----- */
+.sidebar-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 0.75rem;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+
+.sidebar-avatar span {
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* ----- Sidebar Items with SVG Icons ----- */
+.sidebar-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1.25rem;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-size: 0.95rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-align: left;
+  border-left: 3px solid transparent;
+}
+
+.sidebar-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.sidebar-item.active {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  font-weight: 600;
+  border-left: 3px solid #10b981;
+}
+
+.sidebar-item.active .sidebar-icon svg {
+  stroke: #10b981;
+}
+
+.sidebar-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+}
+
+.sidebar-icon svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+}
+
+.sidebar-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ----- Sidebar Badges ----- */
+.sidebar-badge {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: #ef4444;
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 700;
+  min-width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 10px;
+  padding: 0 0.35rem;
+  margin-left: auto;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+/* ----- Sidebar Brand ----- */
+.sidebar-brand {
+  display: block;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: white;
+  text-decoration: none;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.01em;
+  text-align: center;
+}
+
+.sidebar-brand:hover {
+  color: #a5b4fc;
+}
+
+/* ----- Sidebar Header with Avatar ----- */
+.sidebar-header {
+  padding: 1.5rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
+
+.sidebar-header h3 {
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  word-break: break-word;
+  line-height: 1.3;
+}
+
+.sidebar-header p {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.78rem;
+  margin: 0.25rem 0 0 0;
+  text-transform: capitalize;
+}
+
+/* ----- Sidebar Footer with Icon ----- */
+.sidebar-footer {
+  padding: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-footer button {
+  width: 100%;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-align: left;
+}
+
+.sidebar-footer button:hover {
+  background: rgba(239, 68, 68, 0.4);
+}
+
+.sidebar-footer button .sidebar-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+/* ----- Sidebar Base ----- */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 250px;
+  height: 100vh;
+  background: #1e1b4b;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 0.5rem 0;
+  overflow-y: auto;
+}
+
+.sidebar-main {
+  margin-left: 250px;
+  min-height: 100vh;
+}
+
+/* ----- Breadcrumb ----- */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 0;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  color: #6b7280;
+  flex-wrap: wrap;
+}
+
+.breadcrumb-home-icon {
+  display: inline-flex;
+  align-items: center;
+  color: #9ca3af;
+  margin-right: 0.15rem;
+}
+
+.breadcrumb-home-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.breadcrumb-link {
+  color: #4f46e5;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+  font-size: 0.85rem;
+}
+
+.breadcrumb-link:hover {
+  color: #3730a3;
+  text-decoration: underline;
+}
+
+.breadcrumb-current {
+  color: #374151;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.breadcrumb-separator {
+  color: #d1d5db;
+  font-weight: 300;
+  margin: 0 0.1rem;
+}
+
+/* ----- Overlay for Mobile ----- */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ----- Hamburger Mobile Button ----- */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+  padding: 0.6rem;
+  z-index: 1001;
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  background: #1e1b4b;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.hamburger span {
+  width: 22px;
+  height: 2px;
+  background: white;
+  margin: 3px 0;
+  transition: 0.3s;
+  border-radius: 2px;
+  display: block;
+}
+
+.hamburger.active {
+  left: 290px;
+}
+
+/* ----- Page Transition ----- */
+.fade-in-page {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.fade-in-page.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ----- No Sidebar Body ----- */
+body.no-sidebar .sidebar-main {
+  margin-left: 0;
+}
+
+body.no-sidebar main {
+  margin-left: 0;
+}
+
+/* ----- Logged-in Body: Sidebar-Only Layout (no top navbar) ----- */
+body.sidebar-page {
+  /* Reset any top offset — sidebar is fixed from top:0, main content shifts right */
+  padding-top: 0 !important;
+}
+
+body.sidebar-page > header,
+body.sidebar-page > #navbar-placeholder,
+body.sidebar-page #navbar-placeholder {
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+body.sidebar-page .sidebar-main {
+  margin-left: 250px;
+  padding-top: 0;
+  min-height: 100vh;
+}
+
+body.sidebar-page .sidebar-main > .container {
+  padding-top: 1rem;
+}
+
+@media (max-width: 768px) {
+  body.sidebar-page .sidebar-main {
+    margin-left: 0 !important;
+  }
+}
+
+/* ---- Skeleton Loading ----- */
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton-text {
+  height: 1rem;
+  margin-bottom: 0.5rem;
+  width: 80%;
+}
+
+.skeleton-title {
+  height: 1.5rem;
+  margin-bottom: 1rem;
+  width: 60%;
+}
+
+.skeleton-card {
+  height: 150px;
+  margin-bottom: 1rem;
+}
+
+/* ----- Responsive Mobile ----- */
+@media (max-width: 768px) {
+  .hamburger {
+    display: flex;
+  }
+
+  .sidebar {
+    transform: translateX(-100%);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .sidebar-main {
+    margin-left: 0 !important;
+    transition: margin-left 0.3s ease;
+  }
+
+  body.no-sidebar .sidebar-main,
+  body.no-sidebar main {
+    margin-left: 0;
+  }
+
+  .sidebar-header {
+    padding: 1.25rem 1rem;
+  }
+
+  .sidebar-avatar {
+    width: 44px;
+    height: 44px;
+  }
+
+  .sidebar-avatar span {
+    font-size: 1.1rem;
+  }
+}
+
+/* ----- Loading Overlay ----- */
+.loading-overlay-custom {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  border-radius: inherit;
+}
+
+.loading-spinner-custom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  color: #6b7280;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.spinner-ring {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #e5e7eb;
+  border-top: 3px solid #4f46e5;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ----- Skeleton List Item ----- */
+.skeleton-list-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 12px;
+  background: white;
+  margin-bottom: 0.75rem;
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+  .hamburger {
+    top: 0.5rem;
+    left: 0.5rem;
+    padding: 0.5rem;
+  }
+
+  .hamburger.active {
+    left: 285px;
+  }
+}

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - NimTask</title>
+    <link rel="icon" type="image/svg+xml" href="/src/assets/favicon.svg">
+    <link rel="stylesheet" href="/src/css/style.css">
+    <link rel="stylesheet" href="/src/css/navigation.css">
+    <link rel="stylesheet" href="/src/css/profile.css">
+</head>
+
+<body class="sidebar-page">
+  <div id="sidebar-container"></div>
+
+    <main class="sidebar-main">
+        <div class="container">
+          <div id="breadcrumb-area"></div>
+
+          <div id="loading" class="card fade-in" style="text-align:center;padding:3rem;">
+            <div class="profile-spinner"></div>
+            <p style="color:#6b7280;margin-top:1rem;">Memuat profile...</p>
+          </div>
+
+          <div id="profile-view" style="display:none;"></div>
+
+          <!-- Edit Profile Modal -->
+          <div id="edit-modal" class="edit-modal-backdrop" style="display:none;">
+            <div class="edit-modal-card">
+              <div class="edit-modal-header">
+                <h2>Edit Profile</h2>
+                <button class="modal-close-btn" id="edit-modal-close">&times;</button>
+              </div>
+              <div class="edit-modal-body">
+                <div class="edit-form-group">
+                  <label for="edit-name">Nama</label>
+                  <input type="text" id="edit-name" placeholder="Nama Anda">
+                </div>
+                <div class="edit-form-group">
+                  <label for="edit-bio">Bio</label>
+                  <textarea id="edit-bio" rows="3" placeholder="Ceritakan tentang diri Anda..."></textarea>
+                </div>
+                <div class="edit-form-group">
+                  <label for="edit-avatar">Foto Profil (URL)</label>
+                  <input type="url" id="edit-avatar" placeholder="https://contoh.com/foto.jpg">
+                </div>
+                <div class="edit-form-group">
+                  <label for="edit-location">Lokasi</label>
+                  <input type="text" id="edit-location" placeholder="Kota, Negara">
+                </div>
+              </div>
+              <div class="edit-modal-footer">
+                <button class="btn-cancel" id="edit-cancel">Batal</button>
+                <button class="btn-save" id="edit-save">Simpan</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Add Portfolio Modal -->
+          <div id="portfolio-modal" class="edit-modal-backdrop" style="display:none;">
+            <div class="edit-modal-card">
+              <div class="edit-modal-header">
+                <h2 id="portfolio-modal-title">Tambah Portfolio</h2>
+                <button class="modal-close-btn" id="portfolio-modal-close">&times;</button>
+              </div>
+              <div class="edit-modal-body">
+                <input type="hidden" id="portfolio-edit-id">
+                <div class="edit-form-group">
+                  <label for="portfolio-title">Judul</label>
+                  <input type="text" id="portfolio-title" placeholder="Judul portfolio">
+                </div>
+                <div class="edit-form-group">
+                  <label for="portfolio-desc">Deskripsi</label>
+                  <textarea id="portfolio-desc" rows="3" placeholder="Deskripsi project..."></textarea>
+                </div>
+                <div class="edit-form-group">
+                  <label for="portfolio-image">Gambar (URL)</label>
+                  <input type="url" id="portfolio-image" placeholder="https://contoh.com/gambar.jpg">
+                </div>
+                <div class="edit-form-group">
+                  <label for="portfolio-url">Link Project (opsional)</label>
+                  <input type="url" id="portfolio-url" placeholder="https://...">
+                </div>
+              </div>
+              <div class="edit-modal-footer">
+                <button class="btn-cancel" id="portfolio-cancel">Batal</button>
+                <button class="btn-save" id="portfolio-save">Simpan</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+    </main>
+
+    <script type="module">
+        import { Auth } from './js/auth.js';
+        import { Navigation } from './js/navigation.js';
+        import { Profile } from './js/profile.js';
+        import { Toast } from './js/toast.js';
+
+        await Navigation.setupForLoggedInPage('profile');
+        Navigation.renderBreadcrumb('breadcrumb-area');
+
+        let profileData = null;
+        let isOwnProfile = false;
+        let ratingValue = 0;
+        let reviewsCountValue = 0;
+
+        async function loadProfile() {
+            const loadingEl = document.getElementById('loading');
+            const viewEl = document.getElementById('profile-view');
+
+            try {
+                loadingEl.style.display = 'block';
+                viewEl.style.display = 'none';
+
+                if (!Auth.currentUser?.id) {
+                    throw new Error('Tidak ada user yang login. Silakan login terlebih dahulu.');
+                }
+
+                const profileResult = await Profile.getCurrent();
+                profileData = profileResult.data || Auth.currentUser;
+                isOwnProfile = true;
+
+                const ratingRes = await Profile.getRating(profileData.id);
+                ratingValue = ratingRes.data || 0;
+
+                const reviewsRes = await Profile.getReviewsCount(profileData.id);
+                reviewsCountValue = reviewsRes.count || 0;
+
+                renderProfileView();
+
+                loadingEl.style.display = 'none';
+                viewEl.style.display = 'block';
+            } catch (err) {
+                console.error('Profile load error:', err);
+                loadingEl.innerHTML = '<div class="card fade-in" style="text-align:center;padding:3rem;"><h2>Error</h2><p style="color:#6b7280;">' + err.message + '</p><a href="/src/login.html" style="display:inline-block;margin-top:1rem;background:#ef4444;color:white;padding:0.75rem 1.5rem;border-radius:10px;text-decoration:none;font-weight:600;">Login</a></div>';
+            }
+        }
+
+        function renderProfileView() {
+            const viewEl = document.getElementById('profile-view');
+            const name = profileData.name || 'User';
+            const email = profileData.email || '';
+            const bio = profileData.bio || '';
+            const location = profileData.location || '';
+            const avatar = profileData.avatar_url || '';
+            const role = profileData.role || 'customer';
+            const initial = name.charAt(0).toUpperCase();
+
+            const avatarHtml = avatar
+                ? '<img src="' + avatar + '" alt="Avatar" class="profile-avatar-img">'
+                : '<div class="profile-avatar-placeholder">' + initial + '</div>';
+
+            const bioHtml = bio
+                ? '<p class="profile-bio">' + bio + '</p>'
+                : '<p class="profile-bio profile-bio-empty">Belum menambahkan bio.</p>';
+
+            const locationHtml = location
+                ? '<div class="profile-detail"><span class="profile-detail-label">Lokasi</span><span>' + location + '</span></div>'
+                : '';
+
+            let html = '<div class="profile-card card fade-in">' +
+                '<div class="profile-header">' +
+                    '<div class="profile-avatar-wrap">' + avatarHtml + '</div>' +
+                    '<h1 class="profile-name">' + name + '</h1>' +
+                    '<div class="profile-role-badge">' + (role === 'freelancer' ? 'Freelancer' : 'Customer') + '</div>' +
+                '</div>' +
+                '<div class="profile-body">' +
+                    '<div class="profile-details">' +
+                        '<div class="profile-detail"><span class="profile-detail-label">Email</span><span>' + email + '</span></div>' +
+                        '<div class="profile-detail"><span class="profile-detail-label">Role</span><span>' + (role === 'freelancer' ? 'Freelancer' : 'Customer') + '</span></div>' +
+                        locationHtml +
+                        '<div class="profile-detail"><span class="profile-detail-label">Rating</span><span class="profile-rating">★ ' + Number(ratingValue).toFixed(1) + '</span></div>' +
+                        '<div class="profile-detail"><span class="profile-detail-label">Review</span><span>' + reviewsCountValue + ' review</span></div>' +
+                    '</div>' +
+                    bioHtml +
+                '</div>';
+
+            if (isOwnProfile) {
+                html += '<div class="profile-actions">' +
+                    '<a href="' + (role === 'freelancer' ? '/src/freelancer-dashboard.html' : '/src/customer-dashboard.html') + '" class="btn-dashboard">Dashboard</a>' +
+                    '<button class="btn-edit" id="btn-edit-profile">Edit Profile</button>' +
+                '</div>';
+            }
+
+            html += '</div>';
+
+            // Portfolio section for freelancers
+            if (role === 'freelancer') {
+                html += '<div class="card fade-in" style="margin-top:1.5rem;padding:1.5rem;">' +
+                    '<div class="portfolio-section-header">' +
+                        '<h2>Portfolio Saya</h2>' +
+                        (isOwnProfile ? '<button class="btn-add-portfolio" id="btn-add-portfolio">+ Tambah</button>' : '') +
+                    '</div>' +
+                    '<div id="portfolio-grid" class="portfolio-grid"></div>' +
+                '</div>';
+            }
+
+            viewEl.innerHTML = html;
+
+            // Bind edit button
+            if (isOwnProfile) {
+                document.getElementById('btn-edit-profile')?.addEventListener('click', openEditModal);
+            }
+
+            // Load portfolio for freelancers
+            if (role === 'freelancer') {
+                document.getElementById('btn-add-portfolio')?.addEventListener('click', function() {
+                    openPortfolioModal(null);
+                });
+                loadPortfolio();
+            }
+        }
+
+        // ---- Edit Profile Modal ----
+        function openEditModal() {
+            const modal = document.getElementById('edit-modal');
+            document.getElementById('edit-name').value = profileData.name || '';
+            document.getElementById('edit-bio').value = profileData.bio || '';
+            document.getElementById('edit-avatar').value = profileData.avatar_url || '';
+            document.getElementById('edit-location').value = profileData.location || '';
+            modal.style.display = 'flex';
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-modal').style.display = 'none';
+        }
+
+        document.getElementById('edit-modal-close')?.addEventListener('click', closeEditModal);
+        document.getElementById('edit-cancel')?.addEventListener('click', closeEditModal);
+        document.getElementById('edit-modal')?.addEventListener('click', function(e) {
+            if (e.target === this) closeEditModal();
+        });
+
+        document.getElementById('edit-save')?.addEventListener('click', async () => {
+            const saveBtn = document.getElementById('edit-save');
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Menyimpan...';
+
+            const updates = {
+                name: document.getElementById('edit-name').value.trim() || profileData.name,
+                bio: document.getElementById('edit-bio').value.trim(),
+                avatar_url: document.getElementById('edit-avatar').value.trim() || null,
+                location: document.getElementById('edit-location').value.trim() || null
+            };
+
+            const result = await Profile.update(updates);
+
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'Simpan';
+
+            if (result.error) {
+                Toast.error('Gagal update profile: ' + result.error.message);
+                return;
+            }
+
+            profileData = result.data;
+            Toast.success('Profile berhasil diupdate!');
+            closeEditModal();
+            renderProfileView();
+        });
+
+        // ---- Portfolio ----
+        async function loadPortfolio() {
+            const grid = document.getElementById('portfolio-grid');
+            if (!grid) return;
+
+            const result = await Profile.getPortfolio(profileData.id);
+            const items = result.data || [];
+
+            if (!items.length) {
+                grid.innerHTML = '<div class="portfolio-empty"><p>Belum ada portfolio.</p></div>';
+                return;
+            }
+
+            grid.innerHTML = items.map(function(item) {
+                return '<div class="portfolio-card" data-portfolio-id="' + item.id + '">' +
+                    (item.image_url ? '<img src="' + item.image_url + '" alt="' + item.title + '" class="portfolio-card-image">' : '') +
+                    '<div class="portfolio-card-body">' +
+                        '<h3 class="portfolio-card-title">' + item.title + '</h3>' +
+                        '<p class="portfolio-card-desc">' + (item.description || '').substring(0, 120) + ((item.description || '').length > 120 ? '...' : '') + '</p>' +
+                        (item.project_url ? '<a href="' + item.project_url + '" target="_blank" rel="noopener" class="portfolio-card-link">Lihat Project &rarr;</a>' : '') +
+                        (isOwnProfile
+                            ? '<div class="portfolio-card-actions">' +
+                                '<button class="btn-edit-portfolio" data-id="' + item.id + '">Edit</button>' +
+                                '<button class="btn-delete-portfolio" data-id="' + item.id + '">Hapus</button>' +
+                              '</div>'
+                            : '') +
+                    '</div>' +
+                '</div>';
+            }).join('');
+
+            // Bind portfolio edit buttons
+            grid.querySelectorAll('.btn-edit-portfolio').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    const id = btn.getAttribute('data-id');
+                    const item = items.find(function(x) { return x.id === id; });
+                    if (item) openPortfolioModal(item);
+                });
+            });
+
+            // Bind portfolio delete buttons
+            grid.querySelectorAll('.btn-delete-portfolio').forEach(function(btn) {
+                btn.addEventListener('click', async function() {
+                    const id = btn.getAttribute('data-id');
+                    if (!confirm('Hapus portfolio ini?')) return;
+                    const result = await Profile.deletePortfolio(id);
+                    if (result.error) {
+                        Toast.error('Gagal hapus: ' + result.error.message);
+                        return;
+                    }
+                    Toast.success('Portfolio berhasil dihapus');
+                    loadPortfolio();
+                });
+            });
+        }
+
+        function openPortfolioModal(item) {
+            const modal = document.getElementById('portfolio-modal');
+            document.getElementById('portfolio-modal-title').textContent = item ? 'Edit Portfolio' : 'Tambah Portfolio';
+            document.getElementById('portfolio-edit-id').value = item ? item.id : '';
+            document.getElementById('portfolio-title').value = item ? item.title : '';
+            document.getElementById('portfolio-desc').value = item ? (item.description || '') : '';
+            document.getElementById('portfolio-image').value = item ? (item.image_url || '') : '';
+            document.getElementById('portfolio-url').value = item ? (item.project_url || '') : '';
+            modal.style.display = 'flex';
+        }
+
+        function closePortfolioModal() {
+            document.getElementById('portfolio-modal').style.display = 'none';
+        }
+
+        document.getElementById('portfolio-modal-close')?.addEventListener('click', closePortfolioModal);
+        document.getElementById('portfolio-cancel')?.addEventListener('click', closePortfolioModal);
+        document.getElementById('portfolio-modal')?.addEventListener('click', function(e) {
+            if (e.target === this) closePortfolioModal();
+        });
+
+        document.getElementById('portfolio-save')?.addEventListener('click', async () => {
+            const saveBtn = document.getElementById('portfolio-save');
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Menyimpan...';
+
+            const id = document.getElementById('portfolio-edit-id').value;
+            const title = document.getElementById('portfolio-title').value.trim();
+            const description = document.getElementById('portfolio-desc').value.trim();
+            const image_url = document.getElementById('portfolio-image').value.trim() || null;
+            const project_url = document.getElementById('portfolio-url').value.trim() || null;
+
+            if (!title) {
+                Toast.error('Judul harus diisi');
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Simpan';
+                return;
+            }
+
+            let result;
+            if (id) {
+                result = await Profile.updatePortfolio(id, { title, description, image_url, project_url });
+            } else {
+                result = await Profile.addPortfolio({ title, description, image_url, project_url });
+            }
+
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'Simpan';
+
+            if (result.error) {
+                Toast.error('Gagal menyimpan: ' + result.error.message);
+                return;
+            }
+
+            Toast.success(id ? 'Portfolio berhasil diupdate' : 'Portfolio berhasil ditambahkan');
+            closePortfolioModal();
+            loadPortfolio();
+        });
+
+        loadProfile();
+    </script>
+</body>
+
+</html>

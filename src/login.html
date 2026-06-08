@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - NimTask</title>
+  <link rel="icon" type="image/svg+xml" href="/src/assets/favicon.svg">
+  <link rel="stylesheet" href="/src/css/style.css">
+  <link rel="stylesheet" href="/src/css/navigation.css">
+  <style>
+    .auth-page {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 3rem 1rem;
+    }
+
+    .auth-card {
+      background: white;
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+      width: 100%;
+      max-width: 420px;
+      animation: slideUp 0.5s ease forwards;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .auth-card h1 {
+      font-size: 1.75rem;
+      text-align: center;
+      margin-bottom: 0.5rem;
+      color: #1f2937;
+    }
+
+    .auth-card .subtitle {
+      text-align: center;
+      color: #6b7280;
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+    }
+
+    .auth-card .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .auth-card label {
+      display: block;
+      margin-bottom: 0.4rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #374151;
+    }
+
+    .auth-card input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      background: #f9fafb;
+    }
+
+    .auth-card input:focus {
+      outline: none;
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+      background: white;
+    }
+
+    .auth-card input.error {
+      border-color: #ef4444;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+    }
+
+    .auth-card button[type="submit"] {
+      width: 100%;
+      padding: 0.85rem;
+      background: #4f46e5;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      margin-top: 0.5rem;
+    }
+
+    .auth-card button[type="submit"]:hover {
+      background: #4338ca;
+    }
+
+    .auth-card button[type="submit"]:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    .auth-card .message-box {
+      margin-top: 1rem;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .auth-card .message-box.error {
+      display: block;
+      background: #fef2f2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+    }
+
+    .auth-card .message-box.success {
+      display: block;
+      background: #f0fdf4;
+      color: #16a34a;
+      border: 1px solid #bbf7d0;
+    }
+
+    .auth-card .message-box.info {
+      display: block;
+      background: #f0f9ff;
+      color: #2563eb;
+      border: 1px solid #bae6fd;
+    }
+
+    .auth-card .auth-footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.9rem;
+      color: #6b7280;
+    }
+
+    .auth-card .auth-footer a {
+      color: #4f46e5;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .auth-card .auth-footer a:hover {
+      text-decoration: underline;
+    }
+
+    .field-error {
+      font-size: 0.8rem;
+      color: #ef4444;
+      margin-top: 0.25rem;
+      display: none;
+    }
+
+    .field-error.visible {
+      display: block;
+    }
+
+    .password-wrapper {
+      position: relative;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #9ca3af;
+      cursor: pointer;
+      font-size: 0.85rem;
+      padding: 4px 8px;
+      width: auto;
+      border-radius: 4px;
+    }
+
+    .toggle-password:hover {
+      color: #4f46e5;
+      background: rgba(79, 70, 229, 0.05);
+    }
+  </style>
+</head>
+<body class="no-sidebar">
+  <div id="sidebar-container"></div>
+
+  <main>
+    <div class="auth-page">
+      <div class="auth-card">
+        <h1>Welcome Back</h1>
+        <p class="subtitle">Login to your NimTask account</p>
+
+        <form id="login-form" novalidate>
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" placeholder="your@email.com" required autocomplete="email">
+            <div class="field-error" id="email-error">Please enter a valid email address</div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="password-wrapper">
+              <input type="password" id="password" placeholder="Enter your password" required minlength="6" autocomplete="current-password">
+              <button type="button" class="toggle-password" id="toggle-pw-btn" tabindex="-1">Show</button>
+            </div>
+            <div class="field-error" id="password-error">Password must be at least 6 characters</div>
+          </div>
+
+          <button type="submit" id="login-btn">Login</button>
+        </form>
+
+        <div class="message-box" id="message"></div>
+
+        <div class="auth-footer">
+          Don't have an account? <a href="/src/signup.html">Sign Up</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    // Global error handler
+    window.onerror = function(msg) {
+      const msgEl = document.getElementById('message');
+      if (msgEl) {
+        msgEl.className = 'message-box error';
+        msgEl.textContent = 'An error occurred: ' + msg;
+      }
+    };
+
+    import { Auth } from './js/auth.js';
+    import { Navigation } from './js/navigation.js';
+
+    // Setup navigation
+    Navigation.setupFullPage();
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('login-form');
+      const emailInput = document.getElementById('email');
+      const passwordInput = document.getElementById('password');
+      const emailError = document.getElementById('email-error');
+      const passwordError = document.getElementById('password-error');
+      const messageEl = document.getElementById('message');
+      const loginBtn = document.getElementById('login-btn');
+
+      if (!form || !emailInput || !passwordInput) {
+        console.error('Login form elements not found');
+        return;
+      }
+
+      // Toggle password visibility
+      document.getElementById('toggle-pw-btn').addEventListener('click', function() {
+        const pw = passwordInput;
+        if (pw.type === 'password') {
+          pw.type = 'text';
+          this.textContent = 'Hide';
+        } else {
+          pw.type = 'password';
+          this.textContent = 'Show';
+        }
+      });
+
+      // Real-time validation styling
+      emailInput.addEventListener('blur', function() {
+        if (this.value && !this.validity.valid) {
+          this.classList.add('error');
+          emailError.classList.add('visible');
+        } else {
+          this.classList.remove('error');
+          emailError.classList.remove('visible');
+        }
+      });
+
+      emailInput.addEventListener('input', function() {
+        this.classList.remove('error');
+        emailError.classList.remove('visible');
+      });
+
+      passwordInput.addEventListener('blur', function() {
+        if (this.value && this.value.length < 6) {
+          this.classList.add('error');
+          passwordError.classList.add('visible');
+        } else {
+          this.classList.remove('error');
+          passwordError.classList.remove('visible');
+        }
+      });
+
+      passwordInput.addEventListener('input', function() {
+        this.classList.remove('error');
+        passwordError.classList.remove('visible');
+      });
+
+      form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        messageEl.className = 'message-box';
+        messageEl.textContent = '';
+
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+
+        let valid = true;
+
+        if (!email || !emailInput.validity.valid) {
+          emailInput.classList.add('error');
+          emailError.classList.add('visible');
+          valid = false;
+        } else {
+          emailInput.classList.remove('error');
+          emailError.classList.remove('visible');
+        }
+
+        if (!password || password.length < 6) {
+          passwordInput.classList.add('error');
+          passwordError.classList.add('visible');
+          valid = false;
+        } else {
+          passwordInput.classList.remove('error');
+          passwordError.classList.remove('visible');
+        }
+
+        if (!valid) return;
+
+        messageEl.className = 'message-box info';
+        messageEl.textContent = 'Logging in...';
+        loginBtn.disabled = true;
+        loginBtn.textContent = 'Logging in...';
+
+        try {
+          const result = await Auth.login(email, password);
+
+          if (result.error) {
+            messageEl.className = 'message-box error';
+            messageEl.textContent = result.error.message || 'Login failed. Please check your credentials.';
+          } else {
+            messageEl.className = 'message-box success';
+            messageEl.textContent = 'Login successful! Redirecting...';
+            // Respect ?next= param so we can return to the page that sent user here
+            var nextUrl = null;
+            try {
+              var nextParam = new URLSearchParams(window.location.search).get('next');
+              if (nextParam && nextParam.startsWith('/src/')) {
+                nextUrl = nextParam;
+              }
+            } catch (e) {}
+            // Redirect to role-based dashboard, or last visited page if available
+            var lastVisited = localStorage.getItem('lastVisitedPath');
+            var role = Auth.currentUser?.role || 'customer';
+            var defaultUrl = role === 'freelancer' ? '/src/freelancer-dashboard.html' : '/src/customer-dashboard.html';
+            var redirectUrl = nextUrl || lastVisited || defaultUrl;
+            // Clean up last visited path
+            localStorage.removeItem('lastVisitedPath');
+            setTimeout(function() {
+              window.location.href = redirectUrl;
+            }, 1200);
+          }
+        } catch (err) {
+          messageEl.className = 'message-box error';
+          messageEl.textContent = 'Unexpected error: ' + err.message;
+        }
+
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'Login';
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NimTask - Find Freelancers & Services</title>
+  <link rel="icon" type="image/svg+xml" href="/src/assets/favicon.svg">
+  <link rel="stylesheet" href="/src/css/style.css">
+  <link rel="stylesheet" href="/src/css/navigation.css">
+  <style>
+    /* ===== Find Service Page Styles ===== */
+    .find-service-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .find-service-header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #1e1b4b;
+      margin-bottom: 0.5rem;
+    }
+    .find-service-header p {
+      color: #6b7280;
+      font-size: 1rem;
+    }
+
+    /* Search & Filter Bar */
+    .search-filter-bar {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      align-items: stretch;
+    }
+    .search-wrapper {
+      flex: 1;
+      min-width: 250px;
+      position: relative;
+    }
+    .search-wrapper input {
+      width: 100%;
+      padding: 0.85rem 1rem 0.85rem 2.75rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      background: white;
+      transition: border-color 0.2s ease;
+      height: 100%;
+    }
+    .search-wrapper input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+    }
+    .search-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9ca3af;
+      font-size: 1.1rem;
+      pointer-events: none;
+    }
+    .filter-wrapper { min-width: 200px; }
+    .filter-wrapper select {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      background: white;
+      cursor: pointer;
+      transition: border-color 0.2s ease;
+      height: 100%;
+      appearance: auto;
+    }
+    .filter-wrapper select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+    }
+    .price-filter-wrapper {
+      min-width: 220px;
+      position: relative;
+    }
+    .price-filter-wrapper select {
+      width: 100%;
+      padding: 0.85rem 1rem 0.85rem 2.75rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      background: white;
+      cursor: pointer;
+      transition: border-color 0.2s ease;
+      height: 100%;
+      appearance: auto;
+    }
+    .price-filter-wrapper select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+    }
+    .price-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9ca3af;
+      font-size: 1.1rem;
+      pointer-events: none;
+    }
+
+    /* Service Cards Grid */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .service-card-modern {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid #f3f4f6;
+    }
+    .service-card-modern:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(102, 126, 234, 0.15);
+    }
+    .service-card-body {
+      padding: 1.5rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .service-card-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #1e1b4b;
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+    }
+    .service-card-description {
+      color: #6b7280;
+      font-size: 0.875rem;
+      line-height: 1.5;
+      margin-bottom: 1rem;
+      flex: 1;
+    }
+    .service-card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .service-card-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.8rem;
+      color: #6b7280;
+      background: #f9fafb;
+      padding: 0.3rem 0.7rem;
+      border-radius: 8px;
+    }
+    .service-card-meta-item .label {
+      font-weight: 600;
+      color: #374151;
+    }
+    .category-badge {
+      background: #eef2ff;
+      color: #4f46e5;
+      padding: 0.35rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: inline-block;
+    }
+    .freelancer-name {
+      font-weight: 600;
+      color: #374151;
+    }
+    .rating-stars {
+      color: #f59e0b;
+      font-weight: 700;
+    }
+    .price-tag {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #059669;
+    }
+    .service-card-actions {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #f3f4f6;
+    }
+    .service-card-actions .btn {
+      flex: 1;
+      padding: 0.65rem 1rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      text-align: center;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-primary-custom {
+      background: #4f46e5;
+      color: white;
+    }
+    .btn-primary-custom:hover { background: #3730a3; }
+    .btn-outline-custom {
+      background: transparent;
+      color: #4f46e5;
+      border: 2px solid #e5e7eb;
+    }
+    .btn-outline-custom:hover {
+      border-color: #4f46e5;
+      background: #f5f3ff;
+    }
+
+    /* Restriction Banner */
+    .restriction-banner {
+      text-align: center;
+      padding: 3rem 2rem;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      max-width: 600px;
+      margin: 3rem auto;
+    }
+    .restriction-banner .icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    .restriction-banner h2 {
+      color: #1e1b4b;
+      margin-bottom: 0.75rem;
+    }
+    .restriction-banner p {
+      color: #6b7280;
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
+    }
+    .restriction-banner .restriction-cta {
+      display: inline-block;
+      background: #4f46e5;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      margin-top: 0.5rem;
+    }
+    .restriction-banner .restriction-cta:hover { background: #3730a3; }
+
+    /* Empty State */
+    .empty-state-find {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+    .empty-state-find .empty-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    .empty-state-find h3 {
+      color: #374151;
+      margin-bottom: 0.5rem;
+    }
+    .empty-state-find p { color: #9ca3af; }
+    .empty-state-find .empty-cta {
+      display: inline-block;
+      margin-top: 1rem;
+      background: #4f46e5;
+      color: white;
+      padding: 0.7rem 1.25rem;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    .empty-state-find .empty-cta:hover { background: #3730a3; }
+
+    /* Loading skeleton */
+    .loading-skeleton {
+      text-align: center;
+      padding: 3rem;
+      color: #6b7280;
+    }
+    .loading-skeleton .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #10b981;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Active filter chips */
+    .active-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .filter-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: #eef2ff;
+      color: #4f46e5;
+      padding: 0.4rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .filter-chip button {
+      background: transparent;
+      border: none;
+      color: #4f46e5;
+      cursor: pointer;
+      font-size: 0.9rem;
+      line-height: 1;
+      padding: 0;
+    }
+    .filter-chip button:hover { color: #3730a3; }
+
+    /* ----- MODAL ----- */
+    .modal-backdrop-custom {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      z-index: 1100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      animation: fadeIn 0.2s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .modal-card-custom {
+      background: white;
+      border-radius: 18px;
+      width: 100%;
+      max-width: 560px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+      animation: slideUp 0.25s ease;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .modal-header-custom {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid #f3f4f6;
+      gap: 1rem;
+    }
+    .modal-header-custom h2 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #1e1b4b;
+      margin: 0;
+      word-break: break-word;
+    }
+    .modal-close-btn {
+      background: #f3f4f6;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1rem;
+      color: #6b7280;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s ease;
+    }
+    .modal-close-btn:hover {
+      background: #e5e7eb;
+      color: #1e1b4b;
+    }
+    .modal-body-custom {
+      padding: 1.25rem 1.5rem 1.5rem 1.5rem;
+    }
+    .modal-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .modal-meta-row .meta-pill {
+      background: #eef2ff;
+      color: #4f46e5;
+      padding: 0.3rem 0.7rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .modal-section-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 1rem 0 0.4rem 0;
+    }
+    .modal-description {
+      color: #374151;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      font-size: 0.95rem;
+    }
+    .modal-price-big {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #059669;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .modal-actions .btn {
+      flex: 1;
+      min-width: 140px;
+    }
+    .modal-form-group { margin-top: 1rem; }
+    .modal-form-group label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #374151;
+      margin-bottom: 0.5rem;
+    }
+    .modal-form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      resize: vertical;
+      min-height: 100px;
+      transition: border-color 0.2s ease;
+    }
+    .modal-form-group textarea:focus {
+      outline: none;
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+    }
+    .modal-summary {
+      background: #f9fafb;
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin-top: 1rem;
+    }
+    .modal-summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.35rem 0;
+      font-size: 0.9rem;
+      color: #374151;
+    }
+    .modal-summary-row.total {
+      border-top: 1px solid #e5e7eb;
+      padding-top: 0.75rem;
+      margin-top: 0.5rem;
+      font-weight: 700;
+      color: #1e1b4b;
+    }
+
+    /* ===== Hero Section ===== */
+    .hero-section {
+      min-height: 70vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 4rem 2rem 2rem;
+      position: relative;
+      background: linear-gradient(135deg, #f0f4ff 0%, #ede9fe 50%, #fef3c7 100%);
+      border-radius: 0 0 24px 24px;
+      margin-bottom: 2rem;
+    }
+    .hero-content {
+      max-width: 640px;
+    }
+    .hero-title {
+      font-size: 3.5rem;
+      font-weight: 900;
+      color: #1e1b4b;
+      margin: 0 0 0.75rem 0;
+      letter-spacing: -0.02em;
+    }
+    .hero-subtitle {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #4f46e5;
+      margin: 0 0 0.75rem 0;
+    }
+    .hero-desc {
+      font-size: 1.05rem;
+      color: #6b7280;
+      line-height: 1.6;
+      margin: 0 0 2rem 0;
+    }
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .hero-btn {
+      padding: 0.85rem 2rem;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+    }
+    .hero-btn-primary {
+      background: #4f46e5;
+      color: white;
+    }
+    .hero-btn-primary:hover { background: #3730a3; transform: translateY(-1px); }
+    .hero-btn-outline {
+      background: white;
+      color: #4f46e5;
+      border: 2px solid #e5e7eb;
+    }
+    .hero-btn-outline:hover { border-color: #4f46e5; background: #f5f3ff; }
+    .scroll-indicator {
+      position: absolute;
+      bottom: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+      color: #6b7280;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: color 0.2s ease;
+      animation: bounce 2s ease-in-out infinite;
+    }
+    .scroll-indicator:hover { color: #4f46e5; }
+    .scroll-indicator span:first-child { font-size: 1.25rem; }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(6px); }
+    }
+
+    /* ===== Features Section ===== */
+    .features-section {
+      text-align: center;
+      padding: 3rem 1rem;
+    }
+    .features-heading {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #1e1b4b;
+      margin: 0 0 2rem 0;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .feature-card {
+      background: white;
+      border-radius: 16px;
+      padding: 1.75rem 1.25rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      border: 1px solid #f3f4f6;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .feature-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(79,70,229,0.1);
+    }
+    .feature-icon {
+      font-size: 2.25rem;
+      margin-bottom: 0.75rem;
+    }
+    .feature-card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1e1b4b;
+      margin: 0 0 0.4rem 0;
+    }
+    .feature-card p {
+      font-size: 0.875rem;
+      color: #6b7280;
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .search-filter-bar { flex-direction: column; }
+      .search-wrapper, .filter-wrapper, .price-filter-wrapper { min-width: 100%; }
+      .services-grid { grid-template-columns: 1fr; }
+      .service-card-actions { flex-direction: column; }
+      .find-service-header h1 { font-size: 1.5rem; }
+      .modal-card-custom {
+        max-width: 100%;
+        margin: 0;
+        max-height: 100vh;
+        border-radius: 16px 16px 0 0;
+      }
+      .modal-backdrop-custom {
+        align-items: flex-end;
+        padding: 0;
+      }
+    }
+    @media (max-width: 480px) {
+      .service-card-modern { padding: 0; }
+      .service-card-body{padding:1rem;}
+    }
+  </style>
+
+</head>
+
+<body class="no-sidebar">
+  <div id="sidebar-container"></div>
+
+  <main class="container sidebar-main" id="main-content">
+
+    <!-- ===== HERO SECTION (Guest) ===== -->
+    <section id="hero-section" style="display:none;">
+      <div class="hero-section">
+        <div class="hero-content">
+          <h1 class="hero-title">NimTask</h1>
+          <p class="hero-subtitle">Marketplace Jasa Freelance untuk Mahasiswa dan Pelajar.</p>
+          <p class="hero-desc">Temukan freelancer terbaik untuk proyek Anda — mulai dari desain, pemrograman, hingga penulisan. Cepat, mudah, dan terjangkau.</p>
+          <div class="hero-buttons">
+            <a href="/src/login.html" class="hero-btn hero-btn-primary">Login</a>
+            <a href="/src/signup.html" class="hero-btn hero-btn-outline">Sign Up</a>
+          </div>
+        </div>
+        <a href="#features-section" class="scroll-indicator" id="scroll-indicator">
+          <span>&#8595;</span>
+          <span>Jelajahi</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- ===== FEATURES SECTION (Guest) ===== -->
+    <section id="features-section" style="display:none;">
+      <div class="features-section">
+        <h2 class="features-heading">Mengapa Memilih NimTask</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">&#128295;</div>
+            <h3>Mudah Digunakan</h3>
+            <p>Cari jasa, pilih freelancer, dan pesan dalam hitungan menit.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">&#128172;</div>
+            <h3>Chat Langsung</h3>
+            <p>Komunikasi langsung dengan freelancer untuk membahas detail proyek.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">&#128200;</div>
+            <h3>Progress Project</h3>
+            <p>Pantau perkembangan proyek Anda secara real-time dari satu tempat.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">&#11088;</div>
+            <h3>Review & Rating</h3>
+            <p>Berikan rating dan ulasan untuk menjaga kualitas layanan.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SERVICES SECTION ===== -->
+    <section id="page-content">
+      <div class="loading">
+        <div class="spinner" style="border:4px solid #f3f3f3; border-top:4px solid #10b981; border-radius:50%; width:40px; height:40px; animation:spin 1s linear infinite; margin:0 auto 1rem;"></div>
+        <p>Memuat layanan...</p>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="modal-root"></div>
+  <button class="back-to-top-btn" id="back-to-top-btn" type="button" aria-label="Kembali ke atas" title="Kembali ke atas">&#8593;</button>
+
+  <script type="module">
+    import { Auth } from './js/auth.js';
+    import { Navigation } from './js/navigation.js';
+    import { ServiceAPI } from './js/service.js';
+    import { Toast } from './js/toast.js';
+    import { FavoriteAPI } from './js/favorite.js';
+
+    let isLoggedIn = false;
+    let currentUserRole = null;
+    let allCategories = [];
+    let allServicesCache = [];
+    let searchTimeout = null;
+    let currentSearchTerm = '';
+    let currentCategoryId = null;
+    let currentPriceRange = 'all';
+    let favoriteServiceIds = new Set();
+
+    const PRICE_RANGE_LABELS = {
+      all: 'Semua Harga',
+      lt_50k: '< Rp50.000',
+      '50k_100k': 'Rp50.000 - Rp100.000',
+      '100k_500k': 'Rp100.000 - Rp500.000',
+      gt_500k: '> Rp500.000'
+    };
+
+    const pageContent = document.getElementById('page-content');
+
+    function debounce(fn, delay) {
+      if (delay === undefined) delay = 300;
+      return function () {
+        var args = arguments;
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(function () { fn.apply(null, args); }, delay);
+      };
+    }
+
+    function buildLoginUrl(returnPath) {
+      return '/src/login.html?next=' + encodeURIComponent(returnPath || '/src/index.html');
+    }
+
+    function escapeHtml(s) {
+      if (s == null) return '';
+      return String(s)
+        .replace(/&/g, '&')
+        .replace(/</g, '<')
+        .replace(/>/g, '>')
+        .replace(/"/g, '"')
+        .replace(/'/g, '&#39;');
+    }
+
+    function showModal(html) {
+      var root = document.getElementById('modal-root');
+      if (!root) return;
+      root.innerHTML = '<div class="modal-backdrop-custom" data-close-modal>' + html + '</div>';
+      var backdrop = root.querySelector('.modal-backdrop-custom');
+      if (backdrop) {
+        // Remove data-close-modal from backdrop itself so it doesn't interfere with close buttons inside modal
+        backdrop.removeAttribute('data-close-modal');
+        backdrop.addEventListener('click', function (e) {
+          // Close only when clicking backdrop directly (outside modal card) OR a close button
+          if (e.target === backdrop || e.target.closest('[data-close-modal]')) {
+            closeModal();
+          }
+        });
+      }
+      document.addEventListener('keydown', escClose);
+    }
+
+    function escClose(e) { if (e.key === 'Escape') closeModal(); }
+
+    function closeModal() {
+      var root = document.getElementById('modal-root');
+      if (root) root.innerHTML = '';
+      document.removeEventListener('keydown', escClose);
+    }
+
+    function setupBackToTop() {
+      var btn = document.getElementById('back-to-top-btn');
+      if (!btn) return;
+      window.addEventListener('scroll', function () {
+        if (window.scrollY > 400) btn.classList.add('visible');
+        else btn.classList.remove('visible');
+      });
+      btn.addEventListener('click', function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    async function init() {
+      try {
+        console.log('[FindService] init start');
+        await Navigation.setupFullPage();
+        console.log('[FindService] navigation setup done');
+      } catch (e) {
+        console.error('[FindService] Navigation error:', e);
+      }
+
+      try {
+        if (Auth.currentUser) {
+          isLoggedIn = true;
+          currentUserRole = Auth.currentUser.role;
+          console.log('[FindService] user:', currentUserRole);
+        }
+
+        var heroEl = document.getElementById('hero-section');
+        var featuresEl = document.getElementById('features-section');
+
+        if (currentUserRole === 'freelancer') {
+          // Redirect freelancer to their dashboard instead of showing restriction
+          window.location.replace('/src/freelancer-dashboard.html');
+          return;
+        }
+
+        console.log('[FindService] loading categories...');
+        allCategories = await ServiceAPI.getCategories();
+        console.log('[FindService] categories loaded:', allCategories?.length);
+
+        if (isLoggedIn) {
+          try {
+            favoriteServiceIds = await FavoriteAPI.getMyFavoriteServiceIds();
+          } catch (e) {
+            favoriteServiceIds = new Set();
+          }
+          if (heroEl) heroEl.style.display = 'none';
+          if (featuresEl) featuresEl.style.display = 'none';
+        } else {
+          if (heroEl) heroEl.style.display = 'block';
+          if (featuresEl) featuresEl.style.display = 'block';
+        }
+        renderFindServicePage();
+        setupBackToTop();
+        console.log('[FindService] init done');
+      } catch (e) {
+        console.error('[FindService] init error:', e);
+        document.getElementById('page-content').innerHTML = '<div class="empty-state-find" style="padding:3rem;"><h3>Gagal memuat halaman</h3><p>' + e.message + '</p><button onclick="location.reload()" class="empty-cta">Muat Ulang</button></div>';
+      }
+    }
+
+    function renderFreelancerRestriction() {
+      pageContent.innerHTML =
+        '<div class="restriction-banner fade-in">' +
+          '<div class="icon">&#128683;</div>' +
+          '<h2>Halaman khusus Customer</h2>' +
+          '<p>Marketplace ini untuk memesan jasa. Sebagai freelancer, Anda tidak dapat melakukan pemesanan.<br>Silakan kelola jasa dan order di dashboard freelancer Anda.</p>' +
+          '<a href="/src/freelancer-dashboard.html" class="restriction-cta">Buka Dashboard Freelancer &rarr;</a>' +
+        '</div>';
+    }
+
+    function renderFindServicePage() {
+      // Allow re-initialization if pageContent is empty or still has loading spinner
+      if (window.__nimtask_findservice_bound && pageContent.innerHTML.length > 100) return;
+      window.__nimtask_findservice_bound = true;
+
+      pageContent.innerHTML = [
+        '<div class="card fade-in" style="padding: 2rem;">',
+          '<div class="find-service-header">',
+            '<h1>Find Freelancers & Services</h1>',
+            '<p>Browse services from verified freelancers</p>',
+          '</div>',
+          '<div class="search-filter-bar">',
+            '<div class="search-wrapper">',
+              '<span class="search-icon">&#128269;</span>',
+              '<input type="text" id="search-input" placeholder="Cari layanan, freelancer, kategori..." autocomplete="off" />',
+            '</div>',
+            '<div class="filter-wrapper">',
+              '<select id="category-filter"><option value="">Semua Kategori</option></select>',
+            '</div>',
+            '<div class="price-filter-wrapper">',
+              '<span class="price-icon">&#128176;</span>',
+              '<select id="price-filter" aria-label="Filter harga">',
+                '<option value="all">Semua Harga</option>',
+                '<option value="lt_50k">< Rp50.000</option>',
+                '<option value="50k_100k">Rp50.000 - Rp100.000</option>',
+                '<option value="100k_500k">Rp100.000 - Rp500.000</option>',
+                '<option value="gt_500k">> Rp500.000</option>',
+              '</select>',
+            '</div>',
+          '</div>',
+          '<div id="active-filters" class="active-filters"></div>',
+          '<div id="services-grid" class="services-grid">',
+            '<div class="loading-skeleton">Memuat layanan...</div>',
+          '</div>',
+        '</div>'
+      ].join('');
+
+      var categorySelect = document.getElementById('category-filter');
+      allCategories.forEach(function (cat) {
+        var option = document.createElement('option');
+        option.value = cat.id;
+        option.textContent = cat.name;
+        categorySelect.appendChild(option);
+      });
+
+      var searchInput = document.getElementById('search-input');
+      searchInput.addEventListener('input', debounce(async function () {
+        currentSearchTerm = searchInput.value;
+        await loadServices();
+      }, 400));
+
+      categorySelect.addEventListener('change', async function () {
+        currentCategoryId = categorySelect.value || null;
+        await loadServices();
+      });
+
+      var priceFilter = document.getElementById('price-filter');
+      priceFilter.addEventListener('change', async function () {
+        currentPriceRange = priceFilter.value || 'all';
+        await loadServices();
+      });
+
+      loadServices();
+    }
+
+    function renderActiveFilters() {
+      var wrap = document.getElementById('active-filters');
+      if (!wrap) return;
+      var chips = [];
+      if (currentSearchTerm && currentSearchTerm.trim()) {
+        chips.push({ type: 'search', label: '&#128269; "' + currentSearchTerm + '"' });
+      }
+      if (currentCategoryId) {
+        var cat = allCategories.find(function (c) { return c.id === currentCategoryId; });
+        if (cat) chips.push({ type: 'category', label: '&#128193; ' + cat.name });
+      }
+      if (currentPriceRange && currentPriceRange !== 'all') {
+        chips.push({ type: 'price', label: '&#128176; ' + PRICE_RANGE_LABELS[currentPriceRange] });
+      }
+      if (chips.length === 0) { wrap.innerHTML = ''; return; }
+      wrap.innerHTML = chips.map(function (c) {
+        return '<span class="filter-chip" data-chip-type="' + c.type + '">' + c.label +
+          ' <button type="button" data-remove-filter="' + c.type + '" aria-label="Hapus filter">&times;</button>' +
+        '</span>';
+      }).join('');
+      wrap.querySelectorAll('[data-remove-filter]').forEach(function (btn) {
+        btn.addEventListener('click', async function () {
+          var type = btn.getAttribute('data-remove-filter');
+          if (type === 'search') { currentSearchTerm = ''; var s = document.getElementById('search-input'); if (s) s.value = ''; }
+          else if (type === 'category') { currentCategoryId = null; var s = document.getElementById('category-filter'); if (s) s.value = ''; }
+          else if (type === 'price') { currentPriceRange = 'all'; var s = document.getElementById('price-filter'); if (s) s.value = 'all'; }
+          await loadServices();
+        });
+      });
+    }
+
+    var __nimtask_loading_services = false;
+    var __nimtask_pending_load = false;
+
+    async function loadServices() {
+      if (__nimtask_loading_services) {
+        __nimtask_pending_load = true;
+        return;
+      }
+      var grid = document.getElementById('services-grid');
+      if (!grid) return;
+      __nimtask_loading_services = true;
+      __nimtask_pending_load = false;
+      renderActiveFilters();
+      grid.innerHTML = '<div class="loading-skeleton"><div class="spinner"></div><p>Memuat layanan...</p></div>';
+
+      var services = await ServiceAPI.getServices(currentSearchTerm, currentCategoryId, currentPriceRange);
+      allServicesCache = services || [];
+      var hasFilter = currentSearchTerm || currentCategoryId || (currentPriceRange && currentPriceRange !== 'all');
+
+      if (!allServicesCache.length) {
+        __nimtask_loading_services = false;
+        if (hasFilter) {
+          grid.innerHTML = '<div class="empty-state-find" style="grid-column:1/-1;"><div class="empty-icon">&#128269;</div><h3>Tidak ada layanan yang sesuai dengan filter Anda.</h3><p>Coba ubah kata kunci, kategori, atau rentang harga.</p><button class="empty-cta" type="button" id="reset-filters-btn">Reset Filter</button></div>';
+          var resetBtn = document.getElementById('reset-filters-btn');
+          if (resetBtn) resetBtn.addEventListener('click', resetFilters);
+        } else {
+          grid.innerHTML = '<div class="empty-state-find" style="grid-column:1/-1;"><div class="empty-icon">&#128230;</div><h3>Belum ada layanan yang tersedia.</h3><p>Jadilah yang pertama menambahkan jasa Anda sebagai freelancer.</p><a class="empty-cta" href="/src/signup.html">Daftar sebagai Freelancer</a></div>';
+        }
+        return;
+      }
+
+      grid.innerHTML = allServicesCache.map(function (s) {
+        var freelancerId = s.freelancer_id || (s.profiles && s.profiles.id) || '';
+        var freelancerName = (s.profiles && s.profiles.name) || 'Freelancer';
+        var categoryName = (s.categories && s.categories.name) || 'General';
+        var rating = (s.profiles && s.profiles.rating) || 0;
+        var price = s.price || 0;
+        var durationDays = s.duration_days || '-';
+        var description = s.description || '';
+        var truncatedDesc = description.length > 120 ? description.substring(0, 120) + '...' : description;
+        var starsHtml = rating > 0 ? '&#11088;'.repeat(Math.round(rating)) + ' ' + Number(rating).toFixed(1) : '&#11088; 0.0';
+        var isFav = favoriteServiceIds.has(s.id);
+        var favoriteBtn = isLoggedIn
+          ? FavoriteAPI.renderButton(s.id, isFav)
+          : '<button type="button" class="favorite-btn" data-fav-login="1" title="Login untuk menyimpan favorit" style="background:transparent; border:none; cursor:pointer; font-size:1.25rem; line-height:1; padding:0.25rem 0.5rem; border-radius:8px;">&#129293;</button>';
+        var freelancerLink = freelancerId
+          ? '<a href="/src/freelancer-profile.html?id=' + freelancerId + '" class="freelancer-link" title="Lihat profil ' + escapeHtml(freelancerName) + '" style="color:inherit; text-decoration:none; border-bottom:1px dashed #cbd5e1; padding-bottom:1px;">' + escapeHtml(freelancerName) + '</a>'
+          : '<span>' + escapeHtml(freelancerName) + '</span>';
+
+        return [
+          '<div class="service-card-modern" data-service-id="' + s.id + '">',
+            '<div class="service-card-body">',
+              '<div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">',
+                '<div class="service-card-title" style="flex:1;">' + escapeHtml(s.title) + '</div>',
+                '<div style="flex-shrink:0;">' + favoriteBtn + '</div>',
+              '</div>',
+              '<div class="service-card-description">' + escapeHtml(truncatedDesc || 'Tidak ada deskripsi.') + '</div>',
+              '<div class="service-card-meta">',
+                '<span class="service-card-meta-item"><span class="label">&#128100;</span>' + freelancerLink + '</span>',
+                '<span class="service-card-meta-item"><span class="label">&#128193;</span><span class="category-badge">' + escapeHtml(categoryName) + '</span></span>',
+                '<span class="service-card-meta-item"><span class="label">&#11088;</span><span class="rating-stars">' + starsHtml + '</span></span>',
+                '<span class="service-card-meta-item"><span class="label">&#9201;</span><span>' + durationDays + ' hari</span></span>',
+              '</div>',
+              '<div class="price-tag">Rp ' + Number(price).toLocaleString('id-ID') + '</div>',
+              '<div class="service-card-actions">',
+                '<button class="btn btn-outline-custom" data-view-service="' + s.id + '">View Detail</button>',
+                '<button class="btn btn-primary-custom" data-order-service="' + s.id + '">',
+                  isLoggedIn ? 'Order Now' : 'Login to Order',
+                '</button>',
+              '</div>',
+            '</div>',
+          '</div>'
+        ].join('');
+      }).join('');
+
+      if (isLoggedIn) {
+        FavoriteAPI.setupClickHandlers(grid, function (serviceId, isFavNow) {
+          if (isFavNow) favoriteServiceIds.add(serviceId);
+          else favoriteServiceIds.delete(serviceId);
+        });
+      } else {
+        grid.querySelectorAll('[data-fav-login="1"]').forEach(function (btn) {
+          btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            window.location.href = buildLoginUrl(window.location.pathname);
+          });
+        });
+      }
+
+      grid.querySelectorAll('[data-view-service]').forEach(function (btn) {
+        btn.addEventListener('click', function () { openServiceDetail(btn.getAttribute('data-view-service')); });
+      });
+      grid.querySelectorAll('[data-order-service]').forEach(function (btn) {
+        btn.addEventListener('click', function () { openBookingModal(btn.getAttribute('data-order-service')); });
+      });
+
+      __nimtask_loading_services = false;
+      if (__nimtask_pending_load) {
+        __nimtask_pending_load = false;
+        await loadServices();
+      }
+    }
+
+    function resetFilters() {
+      currentSearchTerm = '';
+      currentCategoryId = null;
+      currentPriceRange = 'all';
+      var s = document.getElementById('search-input'); if (s) s.value = '';
+      var c = document.getElementById('category-filter'); if (c) c.value = '';
+      var p = document.getElementById('price-filter'); if (p) p.value = 'all';
+      loadServices();
+    }
+
+    function openServiceDetail(serviceId) {
+      var service = allServicesCache.find(function (x) { return x.id === serviceId; });
+      if (!service) return;
+      var freelancerName = (service.profiles && service.profiles.name) || 'Freelancer';
+      var categoryName = (service.categories && service.categories.name) || 'General';
+      var rating = (service.profiles && service.profiles.rating) || 0;
+      var price = service.price || 0;
+      var durationDays = service.duration_days || '-';
+      var description = service.description || 'Tidak ada deskripsi.';
+      var starsHtml = rating > 0 ? '&#11088;'.repeat(Math.round(rating)) + ' ' + Number(rating).toFixed(1) : '&#11088; 0.0';
+      var freelancerId = service.freelancer_id || (service.profiles && service.profiles.id) || '';
+      var profileLink = freelancerId
+        ? '<a href="/src/freelancer-profile.html?id=' + freelancerId + '" style="color:#4f46e5;text-decoration:none;font-weight:600;">&#128100; Lihat profil ' + escapeHtml(freelancerName) + ' &rarr;</a>'
+        : '';
+      var favoriteInline = isLoggedIn
+        ? '<span id="detail-fav-wrap">' + FavoriteAPI.renderButton(service.id, favoriteServiceIds.has(service.id)) + '</span>'
+        : '';
+      var orderBtnLabel = isLoggedIn ? 'Pesan Sekarang' : 'Login untuk Memesan';
+
+      showModal('' +
+        '<div class="modal-card-custom" role="dialog" aria-modal="true">' +
+          '<div class="modal-header-custom">' +
+            '<h2>' + escapeHtml(service.title) + '</h2>' +
+            '<button type="button" class="modal-close-btn" data-close-modal aria-label="Tutup">&#10005;</button>' +
+          '</div>' +
+          '<div class="modal-body-custom">' +
+            '<div class="modal-meta-row">' +
+              '<span class="meta-pill">&#128193; ' + escapeHtml(categoryName) + '</span>' +
+              '<span class="meta-pill">&#11088; ' + starsHtml + '</span>' +
+              '<span class="meta-pill">&#9201; ' + durationDays + ' hari</span>' +
+              favoriteInline +
+            '</div>' +
+            '<div class="modal-section-label">Harga</div>' +
+            '<div class="modal-price-big">Rp ' + Number(price).toLocaleString('id-ID') + '</div>' +
+            '<div class="modal-section-label">Deskripsi</div>' +
+            '<div class="modal-description">' + escapeHtml(description) + '</div>' +
+            '<div class="modal-section-label">Freelancer</div>' +
+            '<div style="color:#374151;font-size:0.95rem;">' + escapeHtml(freelancerName) + '</div>' +
+            '<div style="margin-top:0.5rem;">' + profileLink + '</div>' +
+            '<div class="modal-actions">' +
+              '<button class="btn btn-outline-custom" data-close-modal>Tutup</button>' +
+              (isLoggedIn && currentUserRole === 'customer' && freelancerId
+                ? '<button class="btn btn-outline-custom" data-chat-freelancer="' + freelancerId + '" data-freelancer-name="' + escapeHtml(freelancerName) + '">&#128172; Chat Freelancer</button>'
+                : '') +
+              '<button class="btn btn-primary-custom" data-order-from-detail="' + service.id + '">' + orderBtnLabel + '</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>'
+      );
+
+      var orderFromDetail = document.querySelector('[data-order-from-detail]');
+      if (orderFromDetail) {
+        orderFromDetail.addEventListener('click', function () {
+          openBookingModal(service.id);
+        });
+      }
+      var chatFreelancerBtn = document.querySelector('[data-chat-freelancer]');
+      if (chatFreelancerBtn) {
+        chatFreelancerBtn.addEventListener('click', function () {
+          var fid = chatFreelancerBtn.getAttribute('data-chat-freelancer');
+          closeModal();
+          window.location.href = '/src/chat.html?recipientId=' + encodeURIComponent(fid);
+        });
+      }
+      if (isLoggedIn) {
+        var favWrap = document.getElementById('detail-fav-wrap');
+        if (favWrap) {
+          FavoriteAPI.setupClickHandlers(favWrap, function (id, isFavNow) {
+            if (isFavNow) favoriteServiceIds.add(id);
+            else favoriteServiceIds.delete(id);
+          });
+        }
+      }
+    }
+
+    function openBookingModal(serviceId) {
+      if (!isLoggedIn) {
+        window.location.href = buildLoginUrl(window.location.pathname);
+        return;
+      }
+      var service = allServicesCache.find(function (x) { return x.id === serviceId; });
+      if (!service) return;
+      var freelancerName = (service.profiles && service.profiles.name) || 'Freelancer';
+      var price = service.price || 0;
+
+      showModal('' +
+        '<div class="modal-card-custom" role="dialog" aria-modal="true">' +
+          '<div class="modal-header-custom">' +
+            '<h2>Pesan Jasa</h2>' +
+            '<button type="button" class="modal-close-btn" data-close-modal aria-label="Tutup">&#10005;</button>' +
+          '</div>' +
+          '<div class="modal-body-custom">' +
+            '<div class="modal-section-label">Layanan</div>' +
+            '<div style="font-weight:700;color:#1e1b4b;font-size:1rem;">' + escapeHtml(service.title) + '</div>' +
+            '<div style="color:#6b7280;font-size:0.85rem;margin-top:0.2rem;">oleh ' + escapeHtml(freelancerName) + '</div>' +
+            '<div class="modal-form-group">' +
+              '<label for="booking-notes">Catatan untuk freelancer (opsional)</label>' +
+              '<textarea id="booking-notes" placeholder="Jelaskan kebutuhan Anda, deadline, atau pertanyaan..."></textarea>' +
+            '</div>' +
+            '<div class="modal-summary">' +
+              '<div class="modal-summary-row"><span>Harga layanan</span><span>Rp ' + Number(price).toLocaleString('id-ID') + '</span></div>' +
+              '<div class="modal-summary-row"><span>Biaya platform</span><span>Rp 0</span></div>' +
+              '<div class="modal-summary-row total"><span>Total</span><span>Rp ' + Number(price).toLocaleString('id-ID') + '</span></div>' +
+            '</div>' +
+            '<div class="modal-actions">' +
+              '<button class="btn btn-outline-custom" data-close-modal>Batal</button>' +
+              '<button class="btn btn-primary-custom" id="confirm-booking-btn" data-service-id="' + service.id + '">Konfirmasi & Pesan</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>'
+      );
+
+      var confirmBtn = document.getElementById('confirm-booking-btn');
+      if (confirmBtn) {
+        confirmBtn.addEventListener('click', async function () {
+          var notesEl = document.getElementById('booking-notes');
+          var notes = notesEl ? notesEl.value.trim() : '';
+          confirmBtn.disabled = true;
+          confirmBtn.textContent = 'Memproses...';
+          try {
+            var result = await ServiceAPI.bookService(service.id, null, notes);
+            if (result.error) {
+              Toast.error(result.error.message || 'Gagal membuat pesanan');
+              confirmBtn.disabled = false;
+              confirmBtn.textContent = 'Konfirmasi & Pesan';
+              return;
+            }
+            closeModal();
+            Toast.success('Pesanan berhasil dibuat! Mengalihkan ke dashboard...');
+            setTimeout(function () {
+              window.location.href = '/src/customer-dashboard.html';
+            }, 1200);
+          } catch (err) {
+            Toast.error('Terjadi kesalahan: ' + err.message);
+            confirmBtn.disabled = false;
+            confirmBtn.textContent = 'Konfirmasi & Pesan';
+          }
+        });
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

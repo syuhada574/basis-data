@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - NimTask</title>
+  <link rel="icon" type="image/svg+xml" href="/src/assets/favicon.svg">
+  <link rel="stylesheet" href="/src/css/style.css" />
+  <link rel="stylesheet" href="/src/css/navigation.css" />
+  <link rel="stylesheet" href="/src/css/dashboard.css" />
+</head>
+<body class="sidebar-page">
+  <div id="sidebar-container"></div>
+
+    <main class="sidebar-main">
+      <div class="container">
+        <div class="card fade-in">
+          <h1 id="dashboard-title">Dashboard</h1>
+
+          <div id="dashboard-content">
+            <div class="loading">Loading...</div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+  <script type="module">
+    import { Auth } from './js/auth.js';
+    import { Navigation } from './js/navigation.js';
+
+    await Navigation.setupFullPage();
+
+    if (!Auth.currentUser) {
+      document.getElementById('dashboard-content').innerHTML = '<div>Please <a href="/src/login.html">login</a></div>';
+      return;
+    }
+
+    // Redirect to role-specific dashboard
+    if (Auth.currentUser.role === 'freelancer') {
+      window.location.replace('/src/freelancer-dashboard.html');
+    } else {
+      window.location.replace('/src/customer-dashboard.html');
+    }
+  </script>
+</body>
+</html>

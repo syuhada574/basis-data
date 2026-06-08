@@ -1,0 +1,1 @@
+import{n as e,t}from"./supabase-DpcGZ4zR.js";t();export{e as supabase};

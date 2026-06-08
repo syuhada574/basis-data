@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Freelancer Profile - NimTask</title>
+  <link rel="icon" type="image/svg+xml" href="/src/assets/favicon.svg">
+  <link rel="stylesheet" href="/src/css/style.css">
+  <link rel="stylesheet" href="/src/css/navigation.css">
+  <style>
+    .loading-skeleton {
+      text-align: center;
+      padding: 3rem;
+      color: #6b7280;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 768px) {
+      .profile-hero > div {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        text-align: left !important;
+      }
+
+      .profile-stats-row {
+        grid-template-columns: 1fr 1fr !important;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .profile-stats-row {
+        grid-template-columns: 1fr !important;
+      }
+    }
+  </style>
+</head>
+
+<body class="no-sidebar">
+  <div id="sidebar-container"></div>
+
+  <main class="container sidebar-main" id="main-content">
+    <div id="page-content">
+      <div class="loading-skeleton">
+        <div style="border:4px solid #f3f3f3; border-top:4px solid #10b981; border-radius:50%; width:40px; height:40px; animation:spin 1s linear infinite; margin:0 auto 1rem;"></div>
+        <p>Memuat profil freelancer...</p>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { Auth } from './js/auth.js';
+    import { Navigation } from './js/navigation.js';
+    import { Toast } from './js/toast.js';
+    import { FreelancerProfile } from './js/freelancerProfile.js';
+
+    const pageContent = document.getElementById('page-content');
+
+    function getQueryParam(name) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(name);
+    }
+
+    async function init() {
+      await Navigation.setupFullPage();
+
+      const freelancerId = getQueryParam('id') || getQueryParam('freelancerId');
+      if (!freelancerId) {
+        pageContent.innerHTML =
+          '<div class="empty-state-find" style="max-width:520px; margin:3rem auto;">' +
+            '<div class="empty-icon">🔍</div>' +
+            '<h3>Profil tidak ditemukan</h3>' +
+            '<p>ID freelancer tidak diberikan di URL.</p>' +
+            '<a href="/src/index.html" class="btn btn-primary-custom" style="display:inline-block; margin-top:1rem; padding:0.6rem 1.25rem; border-radius:10px; text-decoration:none; background:#4f46e5; color:white;">Kembali ke Pencarian</a>' +
+          '</div>';
+        return;
+      }
+
+      try {
+        const data = await FreelancerProfile.loadFor(freelancerId);
+        FreelancerProfile.render(pageContent, data);
+      } catch (err) {
+        console.error('Profile load error:', err);
+        Toast.error('Gagal memuat profil');
+        pageContent.innerHTML =
+          '<div class="empty-state-find" style="max-width:520px; margin:3rem auto;">' +
+            '<div class="empty-icon">⚠️</div>' +
+            '<h3>Terjadi kesalahan</h3>' +
+            '<p>Tidak dapat memuat profil. Silakan coba lagi nanti.</p>' +
+          '</div>';
+      }
+    }
+
+    init();
+  </script>
+</body>
+
+</html>

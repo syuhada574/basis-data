@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - NimTask</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon-Bs_r76O8.svg">
+  <script type="module" crossorigin src="../assets/profile-CSO8kzk7.js"></script>
+  <link rel="modulepreload" crossorigin href="../assets/supabase-DpcGZ4zR.js">
+  <link rel="modulepreload" crossorigin href="../assets/navigation-BuHrXOWh.js">
+  <link rel="modulepreload" crossorigin href="../assets/toast-CJuW2s6j.js">
+  <link rel="stylesheet" crossorigin href="../assets/navigation-BWeC2596.css">
+  <link rel="stylesheet" crossorigin href="../assets/profile-BG5hf0Aw.css">
+</head>
+
+<body class="sidebar-page">
+  <div id="sidebar-container"></div>
+
+    <main class="sidebar-main">
+        <div class="container">
+          <div id="breadcrumb-area"></div>
+
+          <div id="loading" class="card fade-in" style="text-align:center;padding:3rem;">
+            <div class="profile-spinner"></div>
+            <p style="color:#6b7280;margin-top:1rem;">Memuat profile...</p>
+          </div>
+
+          <div id="profile-view" style="display:none;"></div>
+
+          <!-- Edit Profile Modal -->
+          <div id="edit-modal" class="edit-modal-backdrop" style="display:none;">
+            <div class="edit-modal-card">
+              <div class="edit-modal-header">
+                <h2>Edit Profile</h2>
+                <button class="modal-close-btn" id="edit-modal-close">&times;</button>
+              </div>
+              <div class="edit-modal-body">
+                <div class="edit-form-group">
+                  <label for="edit-name">Nama</label>
+                  <input type="text" id="edit-name" placeholder="Nama Anda">
+                </div>
+                <div class="edit-form-group">
+                  <label for="edit-bio">Bio</label>
+                  <textarea id="edit-bio" rows="3" placeholder="Ceritakan tentang diri Anda..."></textarea>
+                </div>
+                <div class="edit-form-group">
+                  <label for="edit-avatar">Foto Profil (URL)</label>
+                  <input type="url" id="edit-avatar" placeholder="https://contoh.com/foto.jpg">
+                </div>
+                <div class="edit-form-group">
+                  <label for="edit-location">Lokasi</label>
+                  <input type="text" id="edit-location" placeholder="Kota, Negara">
+                </div>
+              </div>
+              <div class="edit-modal-footer">
+                <button class="btn-cancel" id="edit-cancel">Batal</button>
+                <button class="btn-save" id="edit-save">Simpan</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Add Portfolio Modal -->
+          <div id="portfolio-modal" class="edit-modal-backdrop" style="display:none;">
+            <div class="edit-modal-card">
+              <div class="edit-modal-header">
+                <h2 id="portfolio-modal-title">Tambah Portfolio</h2>
+                <button class="modal-close-btn" id="portfolio-modal-close">&times;</button>
+              </div>
+              <div class="edit-modal-body">
+                <input type="hidden" id="portfolio-edit-id">
+                <div class="edit-form-group">
+                  <label for="portfolio-title">Judul</label>
+                  <input type="text" id="portfolio-title" placeholder="Judul portfolio">
+                </div>
+                <div class="edit-form-group">
+                  <label for="portfolio-desc">Deskripsi</label>
+                  <textarea id="portfolio-desc" rows="3" placeholder="Deskripsi project..."></textarea>
+                </div>
+                <div class="edit-form-group">
+                  <label for="portfolio-image">Gambar (URL)</label>
+                  <input type="url" id="portfolio-image" placeholder="https://contoh.com/gambar.jpg">
+                </div>
+                <div class="edit-form-group">
+                  <label for="portfolio-url">Link Project (opsional)</label>
+                  <input type="url" id="portfolio-url" placeholder="https://...">
+                </div>
+              </div>
+              <div class="edit-modal-footer">
+                <button class="btn-cancel" id="portfolio-cancel">Batal</button>
+                <button class="btn-save" id="portfolio-save">Simpan</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+    </main>
+
+</body>
+
+</html>
