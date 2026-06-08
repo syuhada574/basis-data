@@ -147,7 +147,7 @@ const FreelancerProfile = {
               '<div style="padding:0.85rem; flex:1; display:flex; flex-direction:column;">' +
                 '<h4 style="margin:0 0 0.35rem 0; font-size:0.95rem; color:#1e1b4b;">' + this.escapeHtml(it.title || 'Untitled') + '</h4>' +
                 (it.description ? '<p style="margin:0; font-size:0.8rem; color:#6b7280; line-height:1.45; flex:1;">' + this.escapeHtml(it.description.substring(0, 100)) + (it.description.length > 100 ? '…' : '') + '</p>' : '') +
-                (it.project_url
+                (it.project_url && /^https?:\/\//i.test(it.project_url)
                   ? '<a href="' + this.escapeHtml(it.project_url) + '" target="_blank" rel="noopener" class="small-btn" style="display:inline-block; margin-top:0.6rem; padding:0.35rem 0.7rem; border-radius:8px; background:#eef2ff; color:#4f46e5; font-size:0.78rem; font-weight:600; text-decoration:none;">View Project →</a>'
                   : '') +
               '</div>' +
