@@ -107,6 +107,16 @@
         let ratingValue = 0;
         let reviewsCountValue = 0;
 
+        function escapeHtml(s) {
+            if (s == null) return '';
+            return String(s)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
         async function loadProfile() {
             const loadingEl = document.getElementById('loading');
             const viewEl = document.getElementById('profile-view');
@@ -150,26 +160,26 @@
             const initial = name.charAt(0).toUpperCase();
 
             const avatarHtml = avatar
-                ? '<img src="' + avatar + '" alt="Avatar" class="profile-avatar-img">'
-                : '<div class="profile-avatar-placeholder">' + initial + '</div>';
+                ? '<img src="' + escapeHtml(avatar) + '" alt="Avatar" class="profile-avatar-img">'
+                : '<div class="profile-avatar-placeholder">' + escapeHtml(initial) + '</div>';
 
             const bioHtml = bio
-                ? '<p class="profile-bio">' + bio + '</p>'
+                ? '<p class="profile-bio">' + escapeHtml(bio) + '</p>'
                 : '<p class="profile-bio profile-bio-empty">Belum menambahkan bio.</p>';
 
             const locationHtml = location
-                ? '<div class="profile-detail"><span class="profile-detail-label">Lokasi</span><span>' + location + '</span></div>'
+                ? '<div class="profile-detail"><span class="profile-detail-label">Lokasi</span><span>' + escapeHtml(location) + '</span></div>'
                 : '';
 
             let html = '<div class="profile-card card fade-in">' +
                 '<div class="profile-header">' +
                     '<div class="profile-avatar-wrap">' + avatarHtml + '</div>' +
-                    '<h1 class="profile-name">' + name + '</h1>' +
+                    '<h1 class="profile-name">' + escapeHtml(name) + '</h1>' +
                     '<div class="profile-role-badge">' + (role === 'freelancer' ? 'Freelancer' : 'Customer') + '</div>' +
                 '</div>' +
                 '<div class="profile-body">' +
                     '<div class="profile-details">' +
-                        '<div class="profile-detail"><span class="profile-detail-label">Email</span><span>' + email + '</span></div>' +
+                        '<div class="profile-detail"><span class="profile-detail-label">Email</span><span>' + escapeHtml(email) + '</span></div>' +
                         '<div class="profile-detail"><span class="profile-detail-label">Role</span><span>' + (role === 'freelancer' ? 'Freelancer' : 'Customer') + '</span></div>' +
                         locationHtml +
                         '<div class="profile-detail"><span class="profile-detail-label">Rating</span><span class="profile-rating">★ ' + Number(ratingValue).toFixed(1) + '</span></div>' +
@@ -276,12 +286,16 @@
             }
 
             grid.innerHTML = items.map(function(item) {
+                var safeTitle = escapeHtml(item.title);
+                var safeDesc = escapeHtml((item.description || '').substring(0, 120)) + ((item.description || '').length > 120 ? '...' : '');
+                var safeImageUrl = escapeHtml(item.image_url);
+                var safeProjectUrl = (item.project_url && /^https?:\/\//i.test(item.project_url)) ? escapeHtml(item.project_url) : '';
                 return '<div class="portfolio-card" data-portfolio-id="' + item.id + '">' +
-                    (item.image_url ? '<img src="' + item.image_url + '" alt="' + item.title + '" class="portfolio-card-image">' : '') +
+                    (item.image_url ? '<img src="' + safeImageUrl + '" alt="' + safeTitle + '" class="portfolio-card-image">' : '') +
                     '<div class="portfolio-card-body">' +
-                        '<h3 class="portfolio-card-title">' + item.title + '</h3>' +
-                        '<p class="portfolio-card-desc">' + (item.description || '').substring(0, 120) + ((item.description || '').length > 120 ? '...' : '') + '</p>' +
-                        (item.project_url ? '<a href="' + item.project_url + '" target="_blank" rel="noopener" class="portfolio-card-link">Lihat Project &rarr;</a>' : '') +
+                        '<h3 class="portfolio-card-title">' + safeTitle + '</h3>' +
+                        '<p class="portfolio-card-desc">' + safeDesc + '</p>' +
+                        (safeProjectUrl ? '<a href="' + safeProjectUrl + '" target="_blank" rel="noopener" class="portfolio-card-link">Lihat Project &rarr;</a>' : '') +
                         (isOwnProfile
                             ? '<div class="portfolio-card-actions">' +
                                 '<button class="btn-edit-portfolio" data-id="' + item.id + '">Edit</button>' +

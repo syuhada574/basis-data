@@ -32,14 +32,13 @@
 
     if (!Auth.currentUser) {
       document.getElementById('dashboard-content').innerHTML = '<div>Please <a href="/src/login.html">login</a></div>';
-      return;
-    }
-
-    // Redirect to role-specific dashboard
-    if (Auth.currentUser.role === 'freelancer') {
-      window.location.replace('/src/freelancer-dashboard.html');
     } else {
-      window.location.replace('/src/customer-dashboard.html');
+      // Redirect to role-specific dashboard
+      if (Auth.currentUser.role === 'freelancer') {
+        window.location.replace('/src/freelancer-dashboard.html');
+      } else {
+        window.location.replace('/src/customer-dashboard.html');
+      }
     }
   </script>
 </body>

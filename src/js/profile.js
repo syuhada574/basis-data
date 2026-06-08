@@ -4,7 +4,7 @@ const Profile = {
   // Get current user profile
   async getCurrent() {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return null;
+    if (!user) return { data: null, error: { message: 'Not authenticated' } };
     
     const { data, error } = await supabase
       .from('profiles')
@@ -18,6 +18,7 @@ const Profile = {
   // Update profile
   async update(profileData) {
     const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { data: null, error: { message: 'Not authenticated' } };
     const { data, error } = await supabase
       .from('profiles')
       .update(profileData)

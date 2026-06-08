@@ -179,9 +179,10 @@ const ServiceAPI = {
 
   async bookService(serviceId, date, client) {
     const { data: { user } } = await supabase.auth.getUser();
-    const service = await supabase.from('services').select('price, freelancer_id').eq('id', serviceId).single();
+    const service = await supabase.from('services').select('price, freelancer_id, is_active').eq('id', serviceId).single();
 
-    if (service.error || !user) return { error: 'Service/User not found' };
+    if (service.error || !user) return { error: { message: 'Service/User not found' } };
+    if (!service.data.is_active) return { error: { message: 'Service ini sudah tidak aktif' } };
 
     const { data: orderData, error } = await supabase
       .from('orders')

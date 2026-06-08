@@ -767,10 +767,10 @@
     function escapeHtml(s) {
       if (s == null) return '';
       return String(s)
-        .replace(/&/g, '&')
-        .replace(/</g, '<')
-        .replace(/>/g, '>')
-        .replace(/"/g, '"')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;');
     }
 
@@ -855,6 +855,23 @@
         }
         renderFindServicePage();
         setupBackToTop();
+
+        // Handle deep-links from favorites page
+        var viewParam = new URLSearchParams(window.location.search).get('viewService');
+        var orderParam = new URLSearchParams(window.location.search).get('orderService');
+        if (viewParam || orderParam) {
+          // Wait for services to load, then open modal
+          var _waitInterval = setInterval(function() {
+            if (allServicesCache.length > 0 || !__nimtask_loading_services) {
+              clearInterval(_waitInterval);
+              if (viewParam) openServiceDetail(viewParam);
+              else if (orderParam) openBookingModal(orderParam);
+            }
+          }, 200);
+          // Safety timeout — stop waiting after 5s
+          setTimeout(function() { clearInterval(_waitInterval); }, 5000);
+        }
+
         console.log('[FindService] init done');
       } catch (e) {
         console.error('[FindService] init error:', e);

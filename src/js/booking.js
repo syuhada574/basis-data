@@ -68,14 +68,7 @@ const Booking = {
   
   init() {
     this.renderBookings();
-    // Realtime updates (commented if websocket issues)
-    // supabase
-    //   .channel('orders')
-    //   .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, 
-    //     () => this.renderBookings())
-    //   .subscribe();
-    // Manual refresh every 5s for now
-    setInterval(() => this.renderBookings(), 5000);
+    // Note: Polling removed. Use Realtime subscriptions instead (see dashboardFreelancer.js).
   }
 };
 
