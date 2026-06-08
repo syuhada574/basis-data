@@ -64,13 +64,18 @@ const Notifications = {
       return;
     }
 
+    function escNotif(s) {
+      if (s == null) return '';
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
     containerEl.innerHTML = notifications
       .map((n) => {
         const readClass = n.is_read ? 'is-read' : 'is-unread';
         return `
           <div class="notification-item ${readClass}" data-id="${n.id}">
-            <div class="notification-title">${n.title || 'Notification'}</div>
-            <div class="notification-message">${n.message || ''}</div>
+            <div class="notification-title">${escNotif(n.title) || 'Notification'}</div>
+            <div class="notification-message">${escNotif(n.message)}</div>
             <div class="notification-time">${new Date(n.created_at).toLocaleString()}</div>
           </div>
         `;

@@ -267,18 +267,18 @@ const FavoriteAPI = {
       })
       .join('');
 
-    // View detail / order buttons
+    // View detail / order buttons — route to find-service page which has the detail modal
     containerEl.querySelectorAll('[data-view-service]').forEach((btn) => {
       btn.addEventListener('click', () => {
         const id = btn.getAttribute('data-view-service');
-        window.location.href = `/src/dashboard.html?service=${id}`;
+        window.location.href = `/src/index.html?viewService=${id}`;
       });
     });
 
     containerEl.querySelectorAll('[data-order-service]').forEach((btn) => {
       btn.addEventListener('click', () => {
         const id = btn.getAttribute('data-order-service');
-        window.location.href = `/src/dashboard.html?service=${id}`;
+        window.location.href = `/src/index.html?orderService=${id}`;
       });
     });
   },

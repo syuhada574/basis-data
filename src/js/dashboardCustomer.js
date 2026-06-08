@@ -511,6 +511,11 @@ const CustomerDashboard = {
       const rating = parseInt(document.getElementById('review-rating').value, 10);
       const comment = document.getElementById('review-comment').value.trim();
 
+      if (!rating || isNaN(rating) || rating < 1 || rating > 5) {
+        Toast.error('Pilih rating (1-5)');
+        return;
+      }
+
       const { data: insertData, error: insertErr } = await supabase
         .from('reviews')
         .insert({
